@@ -1,3 +1,5 @@
+**This fork implements the experimental feature of loading courses with alternating weeks into the calendar.**
+
 <p align="center">
   <img src="/public/logo128.png" width="128px" height="128px" alt="Workday Calendar Tool logo">
 </p>

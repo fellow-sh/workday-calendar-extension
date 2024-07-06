@@ -34,6 +34,7 @@ export type SectionDetail = {
   endTime: string
   location?: string
   dateRange: string
+  altWeek?: string
 }
 
 export interface ISectionData {
