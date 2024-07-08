@@ -1,4 +1,4 @@
-import { Term, SectionDetail } from "../../content/App/App.types"
+import { Term, SectionDetail, AltWeek } from "../../content/App/App.types"
 
 export interface RawWorkdayData {
   code: string
@@ -78,6 +78,13 @@ export const parseSectionDetails = (details: string[]): SectionDetail[] => {
       return acc
     }, [])
 
+    // Handle if "(Alternate Weeks)" is present
+    let altWeek = AltWeek.none
+    if (daysString.includes("Alternate weeks")) {
+      // Handle case HERE
+      altWeek = parseAlternateWeeks(daysString) // This needs to do something
+    }
+    
     //@TODO: Change for summer term support
     let term = dateRange.includes("2024") ? Term.winterOne : Term.winterTwo
     if (dateRange.includes("2024") && dateRange.includes("2025")) {
@@ -100,6 +107,7 @@ export const parseSectionDetails = (details: string[]): SectionDetail[] => {
       endTime: endTime,
       dateRange: dateRange,
       location: location,
+      altWeek: altWeek,
     })
   })
 
@@ -133,4 +141,39 @@ const convertTo24HourFormat = (time: string): string => {
   return `${hours.toString().padStart(2, "0")}:${minutes
     .toString()
     .padStart(2, "0")}`
+}
+
+let parseAlternateWeeks = (startDate: string): AltWeek => {
+  // Find assumption to term start date, include reading week split
+  // Create anonymous function to find which alternating week it is outside this statement
+
+  let getWeek = (date: string) => { // : Date
+    let dateDate = new Date(date);
+    let firstDayOfYear = new Date(dateDate.getFullYear(), 0, 1)
+    let firstISOWeek = firstDayOfYear.getDay()<4 ? 0 : 1
+    
+    return Math.ceil((dateDate[Symbol.toPrimitive]('number') - firstDayOfYear[Symbol.toPrimitive]('number')) / 86400000 / 7) + firstISOWeek
+  }
+  
+  let startWeek = getWeek(startDate)
+
+  let last = 99
+  let startTerm = 0
+  let startWeeks = [
+    "2024-09-03", // W1 Start
+    "2025-01-06", // W2 Start
+    "2024-11-11", // W1 Midterm
+    "2024-02-17", // W2 Midterm
+  ].forEach((termStart: string, index: number) => {
+    let diff = getWeek(termStart) - startWeek
+    if (diff < last) {
+      last = diff
+      startTerm = index
+    }
+  })
+
+  if (startTerm > 1) {
+    return last % 2 == 1 ? AltWeek.even : AltWeek.odd
+  }
+  return last % 2 == 1 ? AltWeek.odd : AltWeek.even
 }

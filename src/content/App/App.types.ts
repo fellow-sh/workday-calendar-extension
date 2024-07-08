@@ -18,6 +18,12 @@ export enum Views {
   settings,
 }
 
+export enum AltWeek {
+  none,
+  odd,
+  even,
+}
+
 export const Term_String_Map: { [key in Term]: string } = {
   [Term.summerOne]: "S1",
   [Term.summerTwo]: "S2",
@@ -34,7 +40,7 @@ export type SectionDetail = {
   endTime: string
   location?: string
   dateRange: string
-  altWeek?: string
+  altWeek?: AltWeek
 }
 
 export interface ISectionData {

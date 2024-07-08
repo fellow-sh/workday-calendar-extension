@@ -41,3 +41,6 @@ Thumbs.db
 *.log
 *.tmp
 *.vim
+
+test.js
+test.ts
